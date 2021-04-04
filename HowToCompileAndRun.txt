@@ -1,0 +1,90 @@
+From https://www3.ntu.edu.sg/home/ehchua/programming/cpp/gcc_make.html
+How to Compile:
+1. navigate to file directory
+
+2. run 'g++ ./filename.cpp' to compile
+3. run './a' to run the generated exe
+or
+2. run 'g++ ./c++Filename.cpp -o outputFilename' to compile
+3. run './outputFilename' to run the generated exe
+
+-Wall to prints all warning messages
+-g to 'generates additional symbolic debuggging information for use with gdb debugger.'
+
+
+Can compile and link separately:
+use -c to just compile (outputs an object file with default name filename.o)
+then compile object file in the same way as compiling c++ files
+
+can link (or straight compile) multiple files by putting more than 1 file name. Good practice to compile files separately and then link them together. Is useful if you have multiple source files
+e.g. g++ -o HelloWorld hello.o world.o
+
+Debugging:
+using gdb:
+1. run 'gdb fileName' to start the debugger (not start running the program in the debugger)
+2. add breakpoints using 'b #' where # is the line number of the breakpoint
+    - breakpoints are pausing places where the debugger will spit out info?
+3. run 'run' to start
+    - use step to step into functions at breakpoints. Use next to step over them?
+    - use print to see a variable's value
+    - use quit to quit
+
+
+
+Ways of examining files (include file extensions):
+'file fileName' gives some information about the file
+'nm fileName' does... something? (The utility "nm" lists symbol table of object files)
+ - can be used to check if a function is defined in an object file
+   - a 'T' in the 2nd common shows the function is defined. While a 'U' shows it isn't
+'ldd fileName' displays a list of shared libraries an exe needs
+
+makefiles (relies on GNU if that matters):
+used to autobuild files
+create a file named 'makefile' no extension in the root directory
+must use tab not spaces for indent
+e.g.
+all: hello.exe
+
+hello.exe: hello.o
+    gcc -o hello.exe hello.o
+
+hello.o: hello.c
+    gcc -c hello.c
+     
+clean:
+    rm hello.o hello.exe
+
+to use just run 'make' command
+running make without arguements makes it target 'all'
+a make file consists of sets of rules
+ - these rules have 3 parts:
+   - a target, a list of pre-requisites, and a command
+e.g.
+target [target 2 (can have multiple targets?)]: pre-req-1 pre-req-2
+    command-1
+    command-2
+
+When asked to evaluate a rule the make file begins by finding the pre-requisite files
+ - If any of the prerequisites has an associated rule, make attempts to update those first.
+ - If the pre-requisite is older than the target it doesn't run (as the target is assumed to be up to date)
+
+can specify the target rule with parameters
+so 'make clean' runs the clean rule (in the above case it removes hello.o and hello.exe)
+
+use # for comments and \ to break long lines across linebreaks. $(var)
+'install' is also a standard target (not sure what it could do though)
+There are some standard variables. Check the website for those
+the above example could be written as:
+all: hello.exe
+ 
+# $@ matches the target; $< matches the first dependent
+hello.exe: hello.o
+	gcc -o $@ $<
+
+hello.o: hello.c
+	gcc -c $<
+     
+clean:
+	rm hello.o hello.exe
+
+
